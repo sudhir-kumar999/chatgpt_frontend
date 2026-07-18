@@ -24,13 +24,20 @@ const ChatPage = () => {
     const [loading,setLoading]=useState(false);
     const [loading2,setLoading2]=useState(false);
 
-    async function fetchMessages(){
-        setLoading(true);
-        const res=await apiData.get(`/user/message/${sessionId}`);
-        if(res.data.success){
-            setMessage(res.data.data);
+    async function fetchMessages() {
+        try {
+            setLoading(true);
+
+            const res = await apiData.get(`/user/message/${sessionId}`);
+
+            if (res.data.success) {
+                setMessage(res.data.data);
+            }
+        } catch (err) {
+            setMessage([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }
     
     useEffect(()=>{
