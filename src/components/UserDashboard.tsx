@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import apiData from "../../api/apidata";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -26,6 +28,27 @@ const UserDashboard = () => {
                 p: 3,
             }}
         >
+            <Box
+                sx={{
+                    position: "absolute",
+                    top: 80,
+                    cursor: "pointer",
+                    left: {
+                        xs: 20,
+                        md: 20,
+                        lg: 300,
+                    },
+                }}
+            >
+                <IconButton
+                    onClick={() => navigate(-1)}
+                    sx={{
+                        mb: 2,
+                    }}
+                >
+                    <ArrowBackIcon sx={{mr:1}}/> Back
+                </IconButton>
+            </Box>
             <Paper
                 elevation={3}
                 sx={{

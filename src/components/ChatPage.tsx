@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -8,8 +9,9 @@ import Typography from "@mui/material/Typography";
 import SendIcon from "@mui/icons-material/Send";
 import apiData from "../../api/apidata";
 import Markdown from "markdown-to-jsx/react";
-import {  useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 interface Response{
     id:string
     role:string
@@ -22,14 +24,11 @@ const ChatPage = () => {
     const [message, setMessage] = useState<Response[]>([]);
     const [input,setInput]=useState("");
     const [loading,setLoading]=useState(false);
-    const [loading2,setLoading2]=useState(false);
-
+    const navigate = useNavigate();
     async function fetchMessages() {
         try {
             setLoading(true);
-
             const res = await apiData.get(`/user/message/${sessionId}`);
-
             if (res.data.success) {
                 setMessage(res.data.data);
             }
@@ -51,31 +50,86 @@ const ChatPage = () => {
             behavior: "smooth",
         });
     }, [message]);
+    // ! without streaming also change in backend controller for directly getting response
+    // const handleSend = async () => {
+    //     if (!input.trim()) return;
+    //     const userMessage = {
+    //         id: Date.now().toString(),
+    //         role: "user",
+    //         content: input,
+    //     };
+    //     setMessage(prev => [...prev, userMessage]);
+    //     const userInput = input;
+    //     setInput("");
+    //     setLoading2(true);
+    //     const res = await apiData.post("/user/chat", {
+    //         message: userInput,
+    //         sessionId,
+    //     });
+    //     if (res.data.success) {
+    //         const aiMessage = {
+    //             id: (Date.now() + 1).toString(),
+    //             role: "assistant",
+    //             content: res.data.data,
+    //         };
+    //         setMessage(prev => [...prev, aiMessage]);
+    //     }
+
+    //     setLoading2(false);
+    // };
+
     const handleSend = async () => {
         if (!input.trim()) return;
+
+        const userInput = input;
+        setInput("");
+
         const userMessage = {
             id: Date.now().toString(),
             role: "user",
-            content: input,
+            content: userInput,
         };
-        setMessage(prev => [...prev, userMessage]);
-        const userInput = input;
-        setInput("");
-        setLoading2(true);
-        const res = await apiData.post("/user/chat", {
-            message: userInput,
-            sessionId,
-        });
-        if (res.data.success) {
-            const aiMessage = {
-                id: (Date.now() + 1).toString(),
+
+        const assistantId = (Date.now() + 1).toString();
+
+        setMessage(prev => [
+            ...prev,
+            userMessage,
+            {
+                id: assistantId,
                 role: "assistant",
-                content: res.data.data,
-            };
-            setMessage(prev => [...prev, aiMessage]);
+                content: "",
+            },
+        ]);
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/user/chat`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+                message: userInput,
+                sessionId,
+            }),
+        });
+        if (!res.body) return;
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = "";
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            fullText += decoder.decode(value, { stream: true });
+            setMessage(prev =>
+                prev.map(msg =>
+                    msg.id === assistantId
+                        ? { ...msg, content: fullText }
+                        : msg
+                )
+            );
         }
-        setLoading2(false);
     };
+
     if (loading) {
         return (
             <Box
@@ -100,6 +154,16 @@ const ChatPage = () => {
                 paddingLeft:{md:"100px"}
             }}
         >
+            <Box sx={{position:"absolute",m:2}}>
+                <IconButton
+                    onClick={() => navigate(-1)}
+                    sx={{
+                        mb: 2,
+                    }}
+                >
+                    <ArrowBackIcon sx={{mr:1}}/> Back
+                </IconButton>
+            </Box>
             <Box
                 sx={{
                     flex: 1,
@@ -180,7 +244,7 @@ const ChatPage = () => {
                         </Box>
                     </Box>
                 ))}
-                {loading2 && (
+                {/* {loading2 && (
                     <Box
                         sx={{
                             display: "flex",
@@ -214,7 +278,7 @@ const ChatPage = () => {
                             </Paper>
                         </Box>
                     </Box>
-                )}
+                )} */}
 
                 <div ref={bottomRef} />
             </Box>

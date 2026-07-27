@@ -60,7 +60,7 @@ const MainLayout = () => {
             const res = await apiData.post("/user/session");
             if (res.data.success) {
                 setSession(prev => [res.data.data, ...prev]);
-                navigate(`/chat/${res.data.data.id}`);
+                navigate(`/chatgpt/chat/${res.data.data.id}`);
             }
         } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
@@ -72,6 +72,7 @@ const MainLayout = () => {
             setLoading(false);
         }
     }
+
     const handleDelete = async (id: string) => {
         const ok = window.confirm("Delete this chat?");
         if (!ok) return;
@@ -79,8 +80,8 @@ const MainLayout = () => {
 
         if (res.data.success) {
             setSession(prev => prev.filter(s => s.id !== id));
-            if (location.pathname === `/chat/${id}`) {
-                navigate("/user/dashboard");
+            if (location.pathname === `/chatgpt/chat/${id}`) {
+                navigate("/chatgpt/user/dashboard");
             }
         }
     };

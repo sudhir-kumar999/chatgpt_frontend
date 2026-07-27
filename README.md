@@ -1,75 +1,138 @@
-# React + TypeScript + Vite
+# ChatGPT style LLM using Gemini API with context management
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full stack chatGPT type Bot with the help of gemini API key which provide the functionality of chatGPT like conversation with maintaining its previous context with the help of gemini stateful conversation provided and managed context internally by google by using its interaction id.
 
-Currently, two official plugins are available:
+## Features
+- ChatGPT like interface to conversation with the bot
+- Stateful conversation
+- Chat wise context management with the help of interaction id provided by google
+- AI Assistance respond to your question
+- Can create multiple chat session which will maintain your history also
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+##  Tec Stack
 
-## React Compiler
+### Frontend
+- React.js
+- Material UI
+- Axios
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+###Backend
+- Express.js
+- Gemini API 
+- Google GenAI SDK
 
-## Expanding the ESLint configuration
+### Database
+- Postgres
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Folder structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Backend
+chatgpt_backend.git/
+├── .gitignore
+├── config/
+│   └── data-source.ts
+├── controller/
+│   ├── authController.ts
+│   ├── chatController.ts
+│   └── getMe.ts
+├── entity/
+│   ├── Message.ts
+│   ├── Session.ts
+│   └── User.ts
+├── eslint.config.mts
+├── middleware/
+│   └── checkLogin.ts
+├── package-lock.json
+├── package.json
+├── routes/
+│   └── userRoute.ts
+├── server.ts
+├── tsconfig.json
+└── utils/
+    ├── gemini.ts
+    ├── generateToken.ts
+    └── verifyToken.ts
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Frontend
+
+chatgpt_frontend.git/
+├── .gitignore
+├── README.md
+├── api/
+│   └── apidata.ts
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── public/
+│   ├── favicon.svg
+│   └── icons.svg
+├── src/
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets/
+│   │   ├── hero.png
+│   │   ├── react.svg
+│   │   └── vite.svg
+│   ├── components/
+│   │   ├── ChatPage.tsx
+│   │   ├── ChatSidebar.tsx
+│   │   ├── Home.tsx
+│   │   ├── Login.tsx
+│   │   ├── MainLayout.tsx
+│   │   ├── NotFound.tsx
+│   │   ├── ProtectedRoute.tsx
+│   │   ├── PubLayout.tsx
+│   │   ├── PubNav.tsx
+│   │   ├── Signup.tsx
+│   │   └── UserDashboard.tsx
+│   ├── context/
+│   │   └── AuthContext.tsx
+│   ├── index.css
+│   └── main.tsx
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vercel.json
+└── vite.config.ts
+
+
+## installation
+
+Clone the Repository
 
 ```
+https://github.com/sudhir-kumar999/chatgpt_frontend.git
+```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```
+npm install
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Create a env file at your root of the project
 
+### Backend
+
+```
+PORT=5500
+DATABASE_URL=You database url
+JWT_SECRET=your JWT secret key
+CORS_ORIGIN=frontend deployed url or local host url
+NODE_ENV=development
+GEMINI_API_KEY=your gemini api key
+```
+
+### Frontend env
+
+```
+VITE_API_URL=Backend localhost or deployed URL
+```
+
+### Start frontend and backend
+
+```
+npm run dev
 ```

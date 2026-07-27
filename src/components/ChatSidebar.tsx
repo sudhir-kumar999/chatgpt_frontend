@@ -22,8 +22,7 @@ const ChatSidebar = ({ session, onDelete }: Props) => {
     return (
         <List sx={{ px: 1 }}>
             {session.map((ses) => {
-                const active = location.pathname === `/chat/${ses.id}`;
-
+                const active = location.pathname === `/chatgpt/chat/${ses.id}`;
                 return (
                     <ListItem
                         key={ses.id}
@@ -54,7 +53,7 @@ const ChatSidebar = ({ session, onDelete }: Props) => {
                     >
                         <ListItemButton
                             component={Link}
-                            to={`/chat/${ses.id}`}
+                            to={`/chatgpt/chat/${ses.id}`}
                             sx={{
                                 borderRadius: 2,
                                 bgcolor: active ? "#000" : "#fff",
